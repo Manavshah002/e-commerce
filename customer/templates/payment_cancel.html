@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="p-t-100 p-b-100 text-center">
+    <h1 class="ltext-105 cl2">Payment Cancelled ❌</h1>
+    <p class="stext-115">Your transaction was cancelled.</p>
+    <a href="{% url 'product_cart_display' %}" class="btn btn-warning">Return to Cart</a>
+</section>
+{% endblock %}
