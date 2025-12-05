@@ -1,1 +1,1 @@
-gunicorn cozastore.wsgi:application --log-file -
+gunicorn cozastore.wsgi:application
