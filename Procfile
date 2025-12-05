@@ -1,0 +1,1 @@
+web: gunicorn cozastore.wsgi:application --log-file -
