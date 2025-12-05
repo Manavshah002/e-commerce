@@ -559,11 +559,11 @@ def create_checkout_session(request):
     for item in cart_items:
         line_items.append({
             "price_data": {
-                "currency": "gbp",  # 🇬🇧 UK Currency
+                "currency": "gbp",  
                 "product_data": {
                     "name": item.product.title,
                 },
-                "unit_amount": int(item.product_price * 100),  # amount in pennies
+                "unit_amount": int(item.product_price * 100),  
             },
             "quantity": item.product_quantity,
         })

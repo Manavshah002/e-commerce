@@ -14,6 +14,11 @@ import os
 from django.conf import settings
 from pathlib import Path
 import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -47,6 +52,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',  
+
 
 
     "customer",
@@ -101,13 +108,43 @@ WSGI_APPLICATION = 'cozastore.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     "default": dj_database_url.config(
+#         default="sqlite:///db.sqlite3",
+#         conn_max_age=600,
+#         ssl_require=True
+#     )
+# }
+
+
+# DATABASES = {
+#     'default': dj_database_url.parse(
+#         os.environ.get(
+#             "DATABASE_URL",
+#             "postgres://postgres:YOUR_PASSWORD@localhost:5432/cozastore_db"
+#         )
+#     )
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'cozastore_db',        # or 'postgres' if you're using default db
+#         'USER': 'postgres',      # or 'postgres'
+#         'PASSWORD': 'NewAdmin123!',  # exact password you set
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
+
+
+load_dotenv()
+
 DATABASES = {
-    "default": dj_database_url.config(
-        default="sqlite:///db.sqlite3",
-        conn_max_age=600,
-        ssl_require=True
-    )
+    "default": dj_database_url.parse(os.getenv("DATABASE_URL"))
 }
+
+
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -151,10 +188,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+
+
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATIC_URL = '/static/'
 
 
 # send email
@@ -163,8 +208,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "diwangopan199@gmail.com"
-EMAIL_HOST_PASSWORD = "teyrjqbrbtaicxyy"
+EMAIL_HOST_USER = "manavmshah2002@gmail.com"
+EMAIL_HOST_PASSWORD = "esir nhhj bfiq ntrn"
 # ===============================
 # ⚡ STRIPE PAYMENT GATEWAY KEYS
 # ===============================

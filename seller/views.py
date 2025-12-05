@@ -149,83 +149,161 @@ def seller_signin(request):
         return render(request, "seller-signin.html")
 
 
-def seller_signup(request):
-    if request.method == "POST":
-        email = request.POST["email"]
-        try:
+# def seller_signup(request):
+#     if request.method == "POST":
+#         email = request.POST["email"]
+#         try:
 
-            # checking all the values are fill if not then show msg_d
-            print(f"\n\n\nstage 1\n\n\n")
-            auth_user = Seller_Authenticate.objects.get(email = email)
-            if request.POST["fname"] == "" or request.POST["lname"] == "" or request.POST["email"] == "" or request.POST["phone"] == "" or request.POST["address"] == "" or request.POST["password"] == "" or request.POST["c_password"] == "":
+#             # checking all the values are fill if not then show msg_d
+#             print(f"\n\n\nstage 1\n\n\n")
+#             auth_user = Seller_Authenticate.objects.get(email = email)
+#             if request.POST["fname"] == "" or request.POST["lname"] == "" or request.POST["email"] == "" or request.POST["phone"] == "" or request.POST["address"] == "" or request.POST["password"] == "" or request.POST["c_password"] == "":
                 
-                context = {
-                    "msg_d" : "All Fields are Mandatory...",
-                    "email_id" : email
-                }
-                return render(request, "seller-signup.html", context=context)
+#                 context = {
+#                     "msg_d" : "All Fields are Mandatory...",
+#                     "email_id" : email
+#                 }
+#                 return render(request, "seller-signup.html", context=context)
 
 
-            # if passwd and con_passwd is same then it will create account.
+#             # if passwd and con_passwd is same then it will create account.
 
-            elif request.POST["password"] == request.POST["c_password"]:
-                print(f"\n\n\nstage 2\n\n\n")
+#             elif request.POST["password"] == request.POST["c_password"]:
+#                 print(f"\n\n\nstage 2\n\n\n")
 
-                userEnteredPassword = request.POST["password"]
+#                 userEnteredPassword = request.POST["password"]
 
-                encyPassword = pbkdf2_sha256.hash(userEnteredPassword)
+#                 encyPassword = pbkdf2_sha256.hash(userEnteredPassword)
 
-                # creating user object to store in db
+#                 # creating user object to store in db
 
-                print(f"\n\n\nstage 3\n\n\n")
-                seller = Seller.objects.create(
-                fname = request.POST["fname"],
-                lname = request.POST["lname"],
-                email = auth_user.email,             
-                phone = request.POST["phone"],
-                address = request.POST["address"],
-                password = encyPassword,
-                )
-                seller.save()
+#                 print(f"\n\n\nstage 3\n\n\n")
+#                 seller = Seller.objects.create(
+#                 fname = request.POST["fname"],
+#                 lname = request.POST["lname"],
+#                 email = auth_user.email,             
+#                 phone = request.POST["phone"],
+#                 address = request.POST["address"],
+#                 password = encyPassword,
+#                 )
+#                 seller.save()
 
-                print(f"\n\n\nstage 3\n\n\n")
-                auth_user.is_verify = True
-                auth_user.save()
+#                 print(f"\n\n\nstage 3\n\n\n")
+#                 auth_user.is_verify = True
+#                 auth_user.save()
 
-                auth_user.delete()
+#                 auth_user.delete()
 
-                print(f"\n\n\nstage 4\n\n\n")
-                subject = f"Account Created Successfully"
-                message = f"Hello {seller.fname} your account has been created successfully in coza-store\nThank You for choosing our services"
-                email_from =  settings.EMAIL_HOST_USER
-                recipient_list = [email,]
-                send_mail(subject, message, email_from, recipient_list)
-                context = {
-                    "msg_s" :  "Account Created Successfully...",
-                    "email_id" : seller.email
-                }
-                return render(request, "seller-signin.html", context=context)
+#                 print(f"\n\n\nstage 4\n\n\n")
+#                 subject = f"Account Created Successfully"
+#                 message = f"Hello {seller.fname} your account has been created successfully in coza-store\nThank You for choosing our services"
+#                 email_from =  settings.EMAIL_HOST_USER
+#                 recipient_list = [email,]
+#                 send_mail(subject, message, email_from, recipient_list)
+#                 context = {
+#                     "msg_s" :  "Account Created Successfully...",
+#                     "email_id" : seller.email
+#                 }
+#                 return render(request, "seller-signin.html", context=context)
 
-            # if passwd and con_passwd Don't match
+#             # if passwd and con_passwd Don't match
 
-            else:
-                context = {
-                    "email_id" : email,
-                    "msg_d" :  "Password and Conform password does not match"
-                }
-                return render(request, "seller-signup.html", context=context)
-        except  Exception as e:
-            print(f"\n\n\n{e}\n\n\n")
-            context = {
-                    "email_id" : email,
-                    "msg_d" :  "Something went wrong..."
-                }
-            return render(request, "seller-signup.html", context=context)
-    else:
-        context = {
-            "email_id" : email,
-        }
-        return render(request, "seller-signup.html", context=context)
+#             else:
+#                 context = {
+#                     "email_id" : email,
+#                     "msg_d" :  "Password and Conform password does not match"
+#                 }
+#                 return render(request, "seller-signup.html", context=context)
+#         except  Exception as e:
+#             print(f"\n\n\n{e}\n\n\n")
+#             context = {
+#                     "email_id" : email,
+#                     "msg_d" :  "Something went wrong..."
+#                 }
+#             return render(request, "seller-signup.html", context=context)
+#     else:
+#         context = {
+#             "email_id" : email,
+#         }
+#         return render(request, "seller-signup.html", context=context)
+
+
+
+def seller_signup(request):
+
+    # Get email passed from OTP page (GET or POST)
+    email = request.GET.get("email") or request.POST.get("email") or None
+
+    # 🚨 BLOCK DIRECT ACCESS WITHOUT OTP
+    if not email or not Seller_Authenticate.objects.filter(email=email).exists():
+        return redirect("seller_email_register")
+
+    if request.method == "POST":
+        try:
+            auth_user = Seller_Authenticate.objects.get(email=email)
+
+            # Check required fields
+            if not all([
+                request.POST.get("fname"),
+                request.POST.get("lname"),
+                request.POST.get("phone"),
+                request.POST.get("address"),
+                request.POST.get("password"),
+                request.POST.get("c_password"),
+            ]):
+                return render(request, "seller-signup.html", {
+                    "msg_d": "All fields are mandatory.",
+                    "email_id": email
+                })
+
+            # Check password match
+            if request.POST["password"] != request.POST["c_password"]:
+                return render(request, "seller-signup.html", {
+                    "msg_d": "Password and Confirm Password do not match.",
+                    "email_id": email
+                })
+
+            # Hash password
+            enc_pass = pbkdf2_sha256.hash(request.POST["password"])
+
+            # Create seller user
+            seller = Seller.objects.create(
+                fname=request.POST["fname"],
+                lname=request.POST["lname"],
+                email=email,
+                phone=request.POST["phone"],
+                address=request.POST["address"],
+                password=enc_pass
+            )
+
+            # Mark OTP verified and delete temp record
+            auth_user.is_verify = True
+            auth_user.save()
+            auth_user.delete()
+
+            # Send confirmation email
+            send_mail(
+                "Account Created Successfully",
+                f"Hello {seller.fname}, your account has been created successfully.",
+                settings.EMAIL_HOST_USER,
+                [email]
+            )
+
+            return render(request, "seller-signin.html", {
+                "msg_s": "Account Created Successfully! Please sign in.",
+                "email_id": seller.email
+            })
+
+        except Exception as e:
+            print("\n\nSignup Error:", e, "\n\n")
+            return render(request, "seller-signup.html", {
+                "msg_d": "Something went wrong...",
+                "email_id": email
+            })
+
+    # GET request
+    return render(request, "seller-signup.html", {"email_id": email})
+
 
 
 def seller_signout(request):
