@@ -142,6 +142,7 @@ load_dotenv()
 
 DATABASES = {
     "default": dj_database_url.parse(os.getenv("DATABASE_URL"))
+    # 'default': dj_database_url.config(conn_max_age=600)
 }
 
 
@@ -189,6 +190,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+DATABASES = {
+    'default': dj_database_url.config(conn_max_age=600)
+}
 
 
 
