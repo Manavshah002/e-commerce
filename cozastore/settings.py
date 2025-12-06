@@ -238,13 +238,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-secret")
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = os.getenv(
-    "DJANGO_ALLOWED_HOSTS",
-    "127.0.0.1,localhost"
-).split(",")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 # -----------------------
-# APPS
+# APPLICATIONS
 # -----------------------
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -253,6 +250,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "whitenoise.runserver_nostatic",
 
     "customer",
@@ -297,7 +295,7 @@ WSGI_APPLICATION = "cozastore.wsgi.application"
 
 
 # -----------------------
-# DATABASE
+# DATABASE CONFIG
 # -----------------------
 DATABASES = {
     "default": dj_database_url.parse(
@@ -307,12 +305,12 @@ DATABASES = {
     )
 }
 
-
 # -----------------------
 # STATIC FILES
 # -----------------------
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # -----------------------
@@ -320,6 +318,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # -----------------------
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
 
 # -----------------------
 # EMAIL SETTINGS
@@ -332,7 +331,7 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 # -----------------------
-# STRIPE KEYS
+# STRIPE CONFIG
 # -----------------------
 STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
