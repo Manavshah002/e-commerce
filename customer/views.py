@@ -11,7 +11,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-
+import random
 
 
 
@@ -90,41 +90,66 @@ def contact(request, *args, **context):
         return render(request, "contact.html", context=context)
 
 
+# def customer_email_register(request):
+#     if request.method == "POST":
+#         print("\n\n\nstage 1\n\n\n")
+#         try: 
+#             print("\n\n\nstage 2\n\n\n")
+#             customer = Customer.objects.filter(email = request.POST["email"]).first()
+#             print("\n\n\nstage 3\n\n\n")
+#             context - {
+#                 "msg_d" : "Email already Registered",
+#                 "email_id" : customer.email,
+#             }
+#             print("\n\n\nstage 4\n\n\n")
+#             return render(request, "customer_email_register.html", context=context)
+#         except:
+#             print("\n\n\nstage 5\n\n\n")
+#             otp = str(uuid4())[:6]
+#             email = request.POST["email"]
+#             verify_customer = Authenticate.objects.create(
+#                 email = email,
+#                 auth_otp = otp 
+#             )
+#             print("\n\n\nstage 6\n\n\n")
+#             subject = f"Email Registeration OTP | Do not Reply"
+#             message = f"Your Email Registeration OTP is {otp}"
+#             email_from =  settings.EMAIL_HOST_USER
+#             recipient_list = [email,]
+#             send_mail(subject, message, email_from, recipient_list)
+#             print("\n\n\nstage 7\n\n\n")
+#             context = {
+#                 "email" : email
+#             }
+#             return render(request, "customer_otp.html", context=context)
+#     else:
+#         print("\n\n\nstage 8\n\n\n")
+#         return render(request, "customer_email_register.html")
+
+
 def customer_email_register(request):
     if request.method == "POST":
-        print("\n\n\nstage 1\n\n\n")
-        try: 
-            print("\n\n\nstage 2\n\n\n")
-            customer = Customer.objects.filter(email = request.POST["email"]).first()
-            print("\n\n\nstage 3\n\n\n")
-            context - {
-                "msg_d" : "Email already Registered",
-                "email_id" : customer.email,
-            }
-            print("\n\n\nstage 4\n\n\n")
-            return render(request, "customer_email_register.html", context=context)
-        except:
-            print("\n\n\nstage 5\n\n\n")
-            otp = str(uuid4())[:6]
-            email = request.POST["email"]
-            verify_customer = Authenticate.objects.create(
-                email = email,
-                auth_otp = otp 
-            )
-            print("\n\n\nstage 6\n\n\n")
-            subject = f"Email Registeration OTP | Do not Reply"
-            message = f"Your Email Registeration OTP is {otp}"
-            email_from =  settings.EMAIL_HOST_USER
-            recipient_list = [email,]
-            send_mail(subject, message, email_from, recipient_list)
-            print("\n\n\nstage 7\n\n\n")
-            context = {
-                "email" : email
-            }
-            return render(request, "customer_otp.html", context=context)
-    else:
-        print("\n\n\nstage 8\n\n\n")
-        return render(request, "customer_email_register.html")
+        email = request.POST.get("email")
+
+        # Always update or create new customer
+        customer, created = Customer.objects.get_or_create(email=email)
+
+        # Generate OTP
+        otp = random.randint(100000, 999999)
+        customer.otp = otp
+        customer.save()
+
+        # Send email
+        subject = "Your Cozastore OTP"
+        message = f"Your OTP is: {otp}"
+        sender = None  # Uses DEFAULT_FROM_EMAIL
+        recipients = [email]
+
+        send_mail(subject, message, sender, recipients, fail_silently=False)
+
+        return render(request, "customer/otp_verify.html", {"email": email})
+
+    return render(request, "customer/email_register.html")
 
 
 def customer_otp(request):
