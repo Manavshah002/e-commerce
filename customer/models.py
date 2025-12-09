@@ -18,12 +18,12 @@ class Contact(models.Model):
 
 
 class Customer(models.Model):
-    fname = models.CharField(max_length=50)
-    lname = models.CharField(max_length=90)
+    fname = models.CharField(max_length=50, null=True, blank=True)
+    lname = models.CharField(max_length=90, null=True, blank=True)
     email = models.EmailField(unique=True)
     phone = models.BigIntegerField(unique=True, null=True, blank=True)
-    address = models.TextField()
-    password = models.CharField(max_length=255)
+    address = models.TextField(blank=True, null=True)
+    password = models.CharField(max_length=255, blank=True, null=True)
 
     def verify_password(self, rawPassword):
         return pbkdf2_sha256.verify(rawPassword, self.password)
