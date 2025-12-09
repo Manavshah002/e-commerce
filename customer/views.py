@@ -95,7 +95,7 @@ def customer_email_register(request):
         print("\n\n\nstage 1\n\n\n")
         try: 
             print("\n\n\nstage 2\n\n\n")
-            customer = Customer.objects.get(email = request.POST["email"])
+            customer = Customer.objects.filter(email = request.POST["email"]).first()
             print("\n\n\nstage 3\n\n\n")
             context - {
                 "msg_d" : "Email already Registered",
