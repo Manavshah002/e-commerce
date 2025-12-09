@@ -21,7 +21,7 @@ class Customer(models.Model):
     fname = models.CharField(max_length=50)
     lname = models.CharField(max_length=90)
     email = models.EmailField(unique=True)
-    phone = models.BigIntegerField(unique=True)
+    # phone = models.BigIntegerField(unique=True)
     address = models.TextField()
     password = models.CharField(max_length=255)
 
